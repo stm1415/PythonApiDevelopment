@@ -1,0 +1,1 @@
+# in order for the parent folder (in our case app) to be treated as a package, it must contain a file named __init__.py
