@@ -4,8 +4,9 @@ from typing import List
 import psycopg
 from psycopg.rows import dict_row  # get teh column names from the database
 import time
-import schemas
 import models
+import schemas
+import utils
 from database import engine, get_db
 from sqlalchemy.orm import Session
 
@@ -136,6 +137,10 @@ async def update_post(id: int, updated_post: schemas.CreatePost, db:Session = De
 
 @app.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 async def create_user(user:schemas.UserCreate, db:Session = Depends(get_db)):
+
+    # hash the password - user.password
+    hashed_password = utils.hash_password(user.password)
+    user.password = hashed_password
     new_user = models.User(**user.model_dump())
     db.add(new_user)
     db.commit()
