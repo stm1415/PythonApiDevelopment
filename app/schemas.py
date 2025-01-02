@@ -7,11 +7,24 @@ Why we need schemas?
 - we want to force the client to send the data in a schema that we expect 
 
 """
-from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
-class Post(BaseModel):
+class PostBase(BaseModel):
     title: str
     content: str
     published: bool = True
-    rating: Optional[int] = None  # fully optional field
+    # rating: Optional[int] = None  # fully optional field
+
+class CreatePost(PostBase):
+    pass
+
+class Post(PostBase):
+    id: int
+    created_at: datetime
+    # class Config:
+    #     from_attributes = True
+
+class UserCreate(BaseModel):
+    email: str
+    password: EmailStr
