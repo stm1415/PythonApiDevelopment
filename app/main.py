@@ -134,7 +134,7 @@ async def update_post(id: int, updated_post: schemas.CreatePost, db:Session = De
     return update_post_query.first()
 
 
-@app.post("/users", status_code=status.HTTP_201_CREATED)
+@app.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 async def create_user(user:schemas.UserCreate, db:Session = Depends(get_db)):
     new_user = models.User(**user.model_dump())
     db.add(new_user)
