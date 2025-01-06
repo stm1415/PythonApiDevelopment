@@ -7,7 +7,7 @@ import app.models
 from app.database import engine, get_db
 from sqlalchemy.orm import Session
 
-from app.routers import post, user
+from app.routers import post, user, auth
 
 app.models.Base.metadata.create_all(bind=engine)
 
@@ -28,6 +28,7 @@ app = FastAPI()
 # breakdown of routes in separate file and use them here
 app.include_router(post.router)
 app.include_router(user.router)
+app.include_router(auth.router)
 
 @app.get("/")  # path operation decorator
 async def root():  # path operation function

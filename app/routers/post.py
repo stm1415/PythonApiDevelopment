@@ -4,9 +4,12 @@ from typing import List
 from app import models, schemas
 from app.database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/posts",
+    tags=['Posts']
+)
 
-@router.get("/posts", response_model=List[schemas.Post])
+@router.get("/", response_model=List[schemas.Post])
 async def get_posts(db:Session = Depends(get_db)):
     # cursor.execute("SELECT * FROM posts")
     # posts = cursor.fetchall()
@@ -29,7 +32,7 @@ async def create_post(payload: schemas.Post):
 
 """
     
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model = schemas.Post)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model = schemas.Post)
 async def create_post(post: schemas.CreatePost, db:Session = Depends(get_db)):
     #   cursor.execute("INSERT INTO posts (title, content, published) VALUES(%s, %s, %s) RETURNING *", (post.title, post.content, post.published))
     #   new_post = cursor.fetchone()
@@ -57,7 +60,7 @@ async def get_post(id: int, response: Response): # anything on the path paramete
 
 """
 
-@router.get("/posts/{id}", response_model=schemas.Post)
+@router.get("/{id}", response_model=schemas.Post)
 async def get_post(id: int, db:Session = Depends(get_db)): 
 #    cursor.execute("SELECT * FROM posts WHERE id = %s", (str(id),))
 #    retrieved_post = cursor.fetchone()
@@ -70,7 +73,7 @@ async def get_post(id: int, db:Session = Depends(get_db)):
    return retrieved_post
 
 
-@router.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(id: int, db:Session = Depends(get_db) ):
     # cursor.execute("DELETE FROM posts WHERE id = %s RETURNING *", (str(id),))
     # deleted_post = cursor.fetchone()
@@ -85,7 +88,7 @@ async def delete_post(id: int, db:Session = Depends(get_db) ):
     return Response(status_code=status.HTTP_204_NO_CONTENT)  # usually we don't return anything for delete operations
 
 
-@router.put("/posts/{id}", response_model=schemas.Post)
+@router.put("/{id}", response_model=schemas.Post)
 async def update_post(id: int, updated_post: schemas.CreatePost, db:Session = Depends(get_db)): # in put toperations we send all the information along with the infromation that needs to be updated
     # cursor.execute("UPDATE posts SET title= %s, content = %s, published = %s WHERE id = %s RETURNING *", (post.title, post.content, post.published, str(id)))
     # updated_post = cursor.fetchone()
