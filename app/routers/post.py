@@ -42,7 +42,7 @@ async def create_post(post: schemas.CreatePost, db:Session = Depends(get_db), cu
     #   conn.commit()
 
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)
-    new_post = models.Post(**post.model_dump())
+    new_post = models.Post(owner_id=current_user.id, **post.model_dump())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
