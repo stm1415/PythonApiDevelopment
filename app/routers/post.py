@@ -13,6 +13,7 @@ router = APIRouter(
 async def get_posts(db:Session = Depends(get_db), current_user: models.User = Depends(oauth2.get_current_user)):
     # cursor.execute("SELECT * FROM posts")
     # posts = cursor.fetchall()
+    # posts = db.query(models.Post).filter(models.Post.owner_id == current_user.id).all() # this will return all the posts that belong to the current user
     posts = db.query(models.Post).all()
 
     return posts
@@ -85,6 +86,9 @@ async def delete_post(id: int, db:Session = Depends(get_db), current_user: model
     if deleted_post_query.first() == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Post with id {id} not found')
     
+    if deleted_post_query.first().owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'You are not allowed to delete this post')
+    
     deleted_post_query.delete(synchronize_session=False)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)  # usually we don't return anything for delete operations
@@ -102,6 +106,9 @@ async def update_post(id: int, updated_post: schemas.CreatePost, db:Session = De
 
     if post== None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Post with id {id} not found')
+    
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f'You are not allowed to update this post')
     
     # update_post_query.update({'title':'hey this is my udpated title', 'content':'this is my updated content'}, synchronize_session=False)
     update_post_query.update(updated_post.model_dump(), synchronize_session=False)
