@@ -7,9 +7,10 @@ Why we need schemas?
 - we want to force the client to send the data in a schema that we expect 
 
 """
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from typing import Optional
+from typing_extensions import Annotated
 
 class PostBase(BaseModel):
     title: str
@@ -48,3 +49,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[int] = None
+
+class Vote(BaseModel):
+    post_id: int
+    dir: Annotated[int, Field(le=1)]
