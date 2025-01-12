@@ -1,29 +1,14 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends
-from fastapi.params import Body
-from typing import List
+from fastapi import FastAPI
 import psycopg
 from psycopg.rows import dict_row  # get teh column names from the database
 import app.models
-from app.database import engine, get_db
-from sqlalchemy.orm import Session
+from app.database import engine
 
 from app.routers import post, user, auth
 
 app.models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-# while True:
-#     try:
-#         conn = psycopg.connect(host='localhost', dbname='fastapi', user='postgres', password='TestPassword', row_factory=dict_row)
-#         cursor = conn.cursor()
-#         print("Database connection was successful")
-#         break
-
-#     except Exception as error:
-#         print("Connecting to database failed")
-#         print("Error: ", error)
-#         time.sleep(3)
 
 # breakdown of routes in separate file and use them here
 app.include_router(post.router)
