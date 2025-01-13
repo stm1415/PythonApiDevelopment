@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from typing import List, Optional
 from app import models, schemas, oauth2
 from app.database import get_db
@@ -9,14 +10,16 @@ router = APIRouter(
     tags=['Posts']
 )
 
-@router.get("/", response_model=List[schemas.Post])
+@router.get("/", response_model=List[schemas.PostOut])
 async def get_posts(db:Session = Depends(get_db), current_user: models.User = Depends(oauth2.get_current_user), limit: int = 10, skip: int = 1, search: Optional[str] = ""):
     # cursor.execute("SELECT * FROM posts")
     # posts = cursor.fetchall()
     # posts = db.query(models.Post).filter(models.Post.owner_id == current_user.id).all() # this will return all the posts that belong to the current user
-    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
+    #posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
-    return posts
+    results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote, models.Vote.post_id==models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
+
+    return results
 
 """
 
@@ -63,12 +66,14 @@ async def get_post(id: int, response: Response): # anything on the path paramete
 
 """
 
-@router.get("/{id}", response_model=schemas.Post)
+@router.get("/{id}", response_model=schemas.PostOut)
 async def get_post(id: int, db:Session = Depends(get_db), current_user: models.User = Depends(oauth2.get_current_user)): 
 #    cursor.execute("SELECT * FROM posts WHERE id = %s", (str(id),))
 #    retrieved_post = cursor.fetchone()
 
-   retrieved_post = db.query(models.Post).filter(models.Post.id == id).first()
+   #retrieved_post = db.query(models.Post).filter(models.Post.id == id).first()
+
+   retrieved_post = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote, models.Vote.post_id==models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == id).first()
    
    if not retrieved_post:
      raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Post with id {id} not found')
