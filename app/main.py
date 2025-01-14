@@ -3,6 +3,7 @@ import psycopg
 from psycopg.rows import dict_row  # get teh column names from the database
 import app.models
 from app.database import engine
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import post, user, auth, vote
 
@@ -12,6 +13,14 @@ from app.routers import post, user, auth, vote
 
 app = FastAPI()
 
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # breakdown of routes in separate file and use them here
 app.include_router(post.router)
 app.include_router(user.router)
