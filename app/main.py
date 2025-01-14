@@ -6,7 +6,9 @@ from app.database import engine
 
 from app.routers import post, user, auth, vote
 
-app.models.Base.metadata.create_all(bind=engine)
+# we no longer need this. This is the command that tells sqlalchemy
+# to run the create statements so that it generated all of the tables. Now We are using alembic to manage our database migrations
+# app.models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
