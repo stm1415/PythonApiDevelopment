@@ -29,7 +29,7 @@ app.include_router(vote.router)
 
 @app.get("/")  # path operation decorator
 async def root():  # path operation function
-    return {"message": "Welcome to my API course"}
+    return {"message": "Welcome to my API course. This is the beginning"}
 
 # @app.get("/sqlalchemy")
 # def test_posts(db:Session = Depends(get_db)):
