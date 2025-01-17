@@ -1,0 +1,33 @@
+version: "3"
+services:
+  api:
+    build: .
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/usr/src/app:ro
+    # env_file:
+    #   - .env
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+      - DATABASE_HOSTNAME=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_PASSWORD=Miracle1643016$
+      - DATABASE_NAME=fastapi
+      - DATABASE_USERNAME=postgres
+      - SECRET_KEY = e299716585e967a755568909a853b1143b5f597f2f1e546ddae14a8a4207de6b
+      - ENCRYPTION_ALGORITHM = HS256
+      - TOKEN_EXPIRATION_MINUTES = 60
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Miracle1643016$
+      POSTGRES_DB: fastapi
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+volumes:
+  postgres-db:
