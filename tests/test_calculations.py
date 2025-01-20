@@ -34,3 +34,10 @@ def test_bank_withdraw(bank_account):
 def test_bank_collect_interest(bank_account):
     bank_account.collect_interest()
     assert round(bank_account.balance,5) == 110
+
+
+@pytest.mark.parametrize("deposit, withdraw, expected", [(100, 50, 50), (100, 100, 0), (200, 100, 100)])
+def test_bank_transaction(bank_account_zero, deposit, withdraw, expected):
+    bank_account_zero.deposit(deposit)
+    bank_account_zero.withdraw(withdraw)
+    assert bank_account_zero.balance == expected
