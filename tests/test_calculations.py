@@ -1,5 +1,5 @@
 import pytest
-from app.calculations import add, BankAccount
+from app.calculations import add, BankAccount, InsufficientFunds
 #pytest -v --> to run the test in verbose mode
 #pytest -v -k "test_add" --> to run the test in verbose mode and only the test that has the name test_add
 #pytest -v -s --> to run the test in verbose mode and show the print statements
@@ -41,3 +41,8 @@ def test_bank_transaction(bank_account_zero, deposit, withdraw, expected):
     bank_account_zero.deposit(deposit)
     bank_account_zero.withdraw(withdraw)
     assert bank_account_zero.balance == expected
+
+
+def test_bank_insufficient_funds(bank_account_zero):
+    with pytest.raises(InsufficientFunds):
+        bank_account_zero.withdraw(100)
