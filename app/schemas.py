@@ -7,7 +7,7 @@ Why we need schemas?
 - we want to force the client to send the data in a schema that we expect 
 
 """
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from datetime import datetime
 from typing import Optional
 from typing_extensions import Annotated
@@ -31,16 +31,18 @@ class Post(PostBase):
     created_at: datetime
     owner_id: int
     owner: UserOut
-    class Config:
-        #orm_mode = True
-        from_attributes = True
+    # class Config:
+    #     #orm_mode = True
+    #     from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class PostOut(BaseModel):
     Post: Post
     votes: int
-    class Config:
-        #orm_mode = True
-        from_attributes = True
+    # class Config:
+    #     #orm_mode = True
+    #     from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserCreate(BaseModel):
     email: EmailStr
