@@ -1,25 +1,10 @@
-import pytest
 import jwt
 from app import schemas
-from tests.database_test import client, session
 from app.config import settings
 
 # pytest --disable-warnings
 # pytest --disable-warnings -v -x --> to stop the test after the first failure
 # pytest --disable-warnings -v -x tests/test_users.py --> to run a specific test file
-
-@pytest.fixture
-def test_user(client):
-    user_data = {"email": "hello1415@gmail.com", "password": "password123"}
-
-    response = client.post("/users/", json=user_data)
-
-    assert response.status_code == 201
-
-    new_user = response.json()
-    new_user['password'] = user_data['password']
-
-    return new_user
 
 
 def test_root(client):
