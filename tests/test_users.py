@@ -4,6 +4,7 @@ from tests.database_test import client, session
 
 # pytest --disable-warnings
 # pytest --disable-warnings -v -x --> to stop the test after the first failure
+# pytest --disable-warnings -v -x tests/test_users.py --> to run a specific test file
 
 
 
@@ -24,3 +25,11 @@ def test_create_user(client):
     new_user = schemas.UserOut(**response.json())  # use of pydantic model to validate the response
     assert response.status_code == 201
     assert new_user.email == "hello13@gmail.com"
+
+
+def test_login_user(client):
+    response = client.post(
+        "/login",
+        data={"username":"hello13@gmail.com", "password": "password123"})
+
+    assert response.status_code == 200
