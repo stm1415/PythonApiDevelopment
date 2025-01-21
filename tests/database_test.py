@@ -15,7 +15,8 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 TestingSessionLocal = sessionmaker(autocommit = False, autoflush= False, bind=engine ) # creates session objects used to interact with the database
 
-@pytest.fixture(scope="module")
+#@pytest.fixture(scope="module")  # scope module means that the fixture will run once per module
+@pytest.fixture
 def session():
     models.Base.metadata.drop_all(bind=engine) # drop the tables
     models.Base.metadata.create_all(bind=engine)  # create the tables
@@ -26,7 +27,8 @@ def session():
         db.close()
 
 
-@pytest.fixture(scope="module")
+#@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def client(session):
     # run code before the test
     def override_get_db():
