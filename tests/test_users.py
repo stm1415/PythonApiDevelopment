@@ -1,4 +1,5 @@
 import jwt
+import pytest
 from app import schemas
 from app.config import settings
 
@@ -37,3 +38,16 @@ def test_login_user(client, test_user):
     assert login_res.token_type == "bearer"
 
     assert response.status_code == 200
+
+@pytest.mark.parametrize("email, password, status_code", [
+    ("wrongemail@gmail.com", "password123", 403),
+    ("hello1415@gmail.com", "wrongPasword", 403),
+    ("wrongemail@gmail.com", "wrongPasword", 403),
+    (None, None, 403),
+    (None, "password123", 403),
+    ("hello1415@gmail.com",None, 403),])
+def test_incorrect_login(client, email, password, status_code):
+    response = client.post(
+        "/login",
+        data={"username":email, "password": password})
+    assert response.status_code == status_code

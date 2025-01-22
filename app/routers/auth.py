@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from typing import Annotated
 from app.database import get_db
 from app import schemas, models, utils, oauth2
 
@@ -9,7 +10,7 @@ router = APIRouter(
 )
 
 @router.post('/login', response_model=schemas.Token)
-def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login(user_credentials: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
 
     """
     oauth2passoword request form is a class that fastapi provides to get the username and password from the user
