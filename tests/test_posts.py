@@ -3,6 +3,22 @@
 from typing import List
 from app import schemas
 
+def test_unauthorized_user_get_posts(client):
+    response = client.get("/posts/")
+
+    assert response.status_code == 401
+
+
+def test_unathorized_user_get_single_post(client, test_posts):
+    response = client.get(f"/posts/{test_posts[0].id}")
+
+    assert response.status_code == 401
+
+def test_unauthorized_user_get_single_post_not_found(client):
+    response = client.get(f"/posts/200")
+
+    assert response.status_code == 401
+
 def test_get_all_posts(authorized_client, test_posts):
     response = authorized_client.get("/posts/")
 
@@ -17,7 +33,15 @@ def test_get_all_posts(authorized_client, test_posts):
     assert len(posts) == len(test_posts)
     # assert posts_list[0].Post.title == test_posts[0].title
 
-def test_unauthorized_get_posts(client):
-    response = client.get("/posts/")
+def test_get_single_post(authorized_client, test_posts):
+    response = authorized_client.get(f"/posts/{test_posts[0].id}")
 
-    assert response.status_code == 401
+    post = response.json()
+    post = schemas.PostOut(**post)
+    assert response.status_code == 200
+    assert post.Post.title == test_posts[0].title
+
+def test_get_single_post_not_found(authorized_client):
+    response = authorized_client.get(f"/posts/200")
+
+    assert response.status_code == 404
