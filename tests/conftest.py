@@ -7,6 +7,7 @@ from app import models
 from app.main import app
 from fastapi.testclient import TestClient
 from app.database import get_db
+from app.oauth2 import create_access_token
 import pytest
 
 SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}_test'
@@ -30,7 +31,7 @@ def session():
 
 
 #@pytest.fixture(scope="module")
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="function")  # @pytest.fixture
 def client(session):
     # run code before the test
     def override_get_db():
@@ -55,3 +56,45 @@ def test_user(client):
     new_user['password'] = user_data['password']
 
     return new_user
+
+
+@pytest.fixture
+def token(test_user):
+    return create_access_token(data={"user_id": test_user['id']})
+
+@pytest.fixture
+def authorized_client(client, token):
+    client.headers = {
+        **client.headers,
+        "Authorization": f"Bearer {token}"
+    }
+
+    return client
+
+@pytest.fixture
+def test_posts(test_user, session):
+
+    posts_data = [{
+        "title": "first title",
+        "content": "first content",
+        "owner_id": test_user['id']
+    }, {
+        "title": "2nd title",
+        "content": "2nd content",
+        "owner_id": test_user['id']
+    },
+        {
+        "title": "3rd title",
+        "content": "3rd content",
+        "owner_id": test_user['id']
+    }]
+
+    def create_post_model(post):
+        return models.Post(**post)
+    post_map = map(create_post_model, posts_data)
+    posts = list(post_map)
+    session.add_all(posts)
+    #session.add_all([models.Post(**post) for post in posts_data])
+    session.commit()
+
+    return session.query(models.Post).all()
