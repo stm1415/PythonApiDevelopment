@@ -2,6 +2,7 @@
 # pytest -v -s tests\test_posts.py
 from typing import List
 from app import schemas
+import pytest
 
 def test_unauthorized_user_get_posts(client):
     response = client.get("/posts/")
@@ -45,3 +46,71 @@ def test_get_single_post_not_found(authorized_client):
     response = authorized_client.get(f"/posts/200")
 
     assert response.status_code == 404
+
+
+
+@pytest.mark.parametrize("title, content, published, status_code", [
+    ("HELLO 1", "This is world 1", True, 201),
+    ("HELLO 2", "This is world 2", False, 201),
+    ("HELLO 3", "This is world 3", True, 201),
+])
+def test_create_post(authorized_client,test_user, title, content, published, status_code):
+    response = authorized_client.post(
+        "/posts/",
+        json={"title": title, "content": content, "published": published}
+    )
+
+    post = response.json()
+    post = schemas.Post(**post)
+
+    assert response.status_code == status_code
+    assert post.title == title
+    assert post.content == content
+    assert post.published == published
+    assert post.owner_id == test_user['id']
+
+def test_create_post_default_published_true(authorized_client,test_user):
+    response = authorized_client.post(
+        "/posts/",
+        json={"title": "HELLO 4", "content": "This is world 4"}
+    )
+
+    post = response.json()
+    post = schemas.Post(**post)
+
+    assert response.status_code == 201
+    assert post.published == True
+    assert post.owner_id == test_user['id']
+
+def test_create_post_unauthorized_user(client):
+    response = client.post(
+        "/posts/",
+        json={"title": "HELLO 1", "content": "This is world 1", "published": True}
+    )
+
+    assert response.status_code == 401
+
+
+
+
+def test_delete_post_unauthorized_user(client, test_posts):
+    response = client.delete(f"/posts/{test_posts[0].id}")
+
+    assert response.status_code == 401
+
+def test_delete_post(authorized_client, test_posts):
+    response = authorized_client.delete(f"/posts/{test_posts[0].id}")
+
+    assert response.status_code == 204
+
+def test_delete_post_not_found(authorized_client):
+    response = authorized_client.delete(f"/posts/200")
+
+    assert response.status_code == 404
+
+def test_delete_other_user_post(authorized_client, test_posts):
+    response = authorized_client.delete(f"/posts/{test_posts[3].id}")
+
+    assert response.status_code == 403
+
+

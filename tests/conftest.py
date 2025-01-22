@@ -57,6 +57,19 @@ def test_user(client):
 
     return new_user
 
+@pytest.fixture
+def test_user2(client):
+    user_data = {"email": "hello2930@gmail.com", "password": "password123"}
+
+    response = client.post("/users/", json=user_data)
+
+    assert response.status_code == 201
+
+    new_user = response.json()
+    new_user['password'] = user_data['password']
+
+    return new_user
+
 
 @pytest.fixture
 def token(test_user):
@@ -72,7 +85,7 @@ def authorized_client(client, token):
     return client
 
 @pytest.fixture
-def test_posts(test_user, session):
+def test_posts(test_user, test_user2, session):
 
     posts_data = [{
         "title": "first title",
@@ -87,7 +100,14 @@ def test_posts(test_user, session):
         "title": "3rd title",
         "content": "3rd content",
         "owner_id": test_user['id']
-    }]
+    },
+    {
+        "title": "4th title",
+        "content": "4th content",
+        "owner_id": test_user2['id']
+    }
+    
+    ]
 
     def create_post_model(post):
         return models.Post(**post)
