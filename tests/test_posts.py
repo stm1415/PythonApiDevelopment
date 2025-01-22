@@ -114,3 +114,43 @@ def test_delete_other_user_post(authorized_client, test_posts):
     assert response.status_code == 403
 
 
+
+def test_update_post_unauthorized_user(client, test_posts):
+    response = client.put(
+        f"/posts/{test_posts[0].id}",
+        json={"title": "HELLO 1", "content": "This is world 1", "published": True}
+    )
+
+    assert response.status_code == 401
+
+def test_update_post(authorized_client, test_posts):
+    response = authorized_client.put(
+        f"/posts/{test_posts[0].id}",
+        json={"title": "HELLO 111", "content": "This is world 1111", "published": True}
+    )
+
+    post = response.json()
+    post = schemas.Post(**post)
+
+    assert response.status_code == 200
+    assert post.title == "HELLO 111"
+    assert post.content == "This is world 1111"
+    assert post.published == True
+    assert post.id == test_posts[0].id
+
+
+def test_update_post_not_found(authorized_client):
+    response = authorized_client.put(
+        f"/posts/200",
+        json={"title": "HELLO 1", "content": "This is world 1", "published": True}
+    )
+
+    assert response.status_code == 404
+
+def test_update_other_user_post(authorized_client, test_posts):
+    response = authorized_client.put(
+        f"/posts/{test_posts[3].id}",
+        json={"title": "HELLO 111", "content": "This is world 111", "published": True}
+    )
+
+    assert response.status_code == 403
