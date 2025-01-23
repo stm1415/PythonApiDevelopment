@@ -1,0 +1,20 @@
+name: Build and Deploy Code
+
+# on:
+#   push:
+#     branches:
+#       - "main"
+#       - "test_main"
+#   pull_request:
+#     branches:
+#       - "test_main"
+on: [push, pull_request]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pulling git repo
+        uses: actions/checkout@v2
+      - name: testing suman mode
+        run: echo "hello world"
