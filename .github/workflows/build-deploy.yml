@@ -15,6 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: pulling git repo
-        uses: actions/checkout@v2
-      - name: testing suman mode
-        run: echo "hello world"
+        uses: actions/checkout@v4
+      - name: install python
+        run: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: update pip
+        run: python -m pip install --upgrade pip
+      - name: install dependencies
+        run: pip install -r requirements.txt
