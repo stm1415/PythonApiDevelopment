@@ -15,14 +15,14 @@ jobs:
     environment:
       name: Dev
     env:
-      DATABASE_HOSTNAME=${{ secrets.DATABASE_HOSTNAME }}
-      DATABASE_PORT=${{ secrets.DATABASE_PORT }}
-      DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
-      DATABASE_NAME=${{ secrets.DATABASE_NAME }}
-      DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
-      SECRET_KEY = ${{ secrets.SECRET_KEY }}
-      ENCRYPTION_ALGORITHM = ${{ secrets.ENCRYPTION_ALGORITHM }}
-      TOKEN_EXPIRATION_MINUTES = ${{ secrets.TOKEN_EXPIRATION_MINUTES }}
+      DATABASE_HOSTNAME:${{ secrets.DATABASE_HOSTNAME }}
+      DATABASE_PORT:${{ secrets.DATABASE_PORT }}
+      DATABASE_PASSWORD:${{ secrets.DATABASE_PASSWORD }}
+      DATABASE_NAME:${{ secrets.DATABASE_NAME }}
+      DATABASE_USERNAME:${{ secrets.DATABASE_USERNAME }}
+      SECRET_KEY:${{ secrets.SECRET_KEY }}
+      ENCRYPTION_ALGORITHM:${{ secrets.ENCRYPTION_ALGORITHM }}
+      TOKEN_EXPIRATION_MINUTES:${{ secrets.TOKEN_EXPIRATION_MINUTES }}
     services:
       postgres:
         image: postgres
