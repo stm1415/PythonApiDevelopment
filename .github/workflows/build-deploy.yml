@@ -11,7 +11,7 @@ name: Build and Deploy Code
 on: [push, pull_request]
 
 jobs:
-  job1:
+  build:
     environment:
       name: Dev
     env:
@@ -68,5 +68,12 @@ jobs:
           tags: suman1415/fastapi-suman:latest
           cache-from: type=registry,ref=suman1415/fastapi:latest
           cache-to: type=inline
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploying service
+        run: echo "Deploying service"
+      
           
        
