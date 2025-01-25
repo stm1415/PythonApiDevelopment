@@ -85,13 +85,29 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}} #Must be unique in Heroku
           heroku_email: ${{secrets.HEROKU_EMAIL}}
-        # pull our github repo
-        # install heroku cli
-        # login to heroku
-        # add git remote to heroku
-        # push to heroku
+          # pull our github repo
+          # install heroku cli
+          # login to heroku
+          # add git remote to heroku
+          # push to heroku
 
-         
+
+          # deploy to ubuntu server:
+          # login to our ubuntu
+          # cd /app/src
+          # git pull
+          # systemcl restart api
+      # - name: deploy to ubuntu server
+      #   uses: appleboy/ssh-action@v1.2.0
+      #   with:
+      #     host: ${{ secrets.UBUNTU_PROD_HOST }}
+      #     username: ${{ secrets.PROD_USERNAME }}
+      #     key: ${{ secrets.PROD_PASSWORD }}
+      #     script: |
+      #       cd /app/src
+      #       git pull
+      #       echo ${{ secrtes.PROD_PASSWORD }} | -S sudo systemctl restart api
+ 
       
           
        
