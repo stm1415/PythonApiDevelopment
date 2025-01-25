@@ -13,7 +13,7 @@ def test_root(client):
     # print(response.json())
     # print(response.json()['message'])
     # print(response.json().get('message'))
-    assert response.json()['message'] == "Welcome to my API course. This is the beginning of a new chapter. Hello world again dear"
+    assert response.json()['message'] == "Hello world again dear. Successfully deployed from the github pipeline."
 
     assert response.status_code == 200
 
